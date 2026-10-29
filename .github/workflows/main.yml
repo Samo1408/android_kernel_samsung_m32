@@ -48,15 +48,15 @@ jobs:
           TERM: xterm
         run: |
           
-          test -f build.sh
+          test -f build_kernel.sh
           test -f config.cfg
           test -f arch/arm64/configs/rsuntk_defconfig
           test ! -e out/.config
           printf '1\rsuntk_defconfig\n\nE\n' |
-            timeout 110m bash ./build.sh 2>&1 | tee "$RUNNER_TEMP/kernel-build.log"
+            timeout 110m bash ./build_kernel.sh 2>&1 | tee "$RUNNER_TEMP/kernel-build.log"
           if grep -Eq 'Kernel Building Failed|Config Applying Failed|Cleaning Failed|rsuntk_defconfig is not found' \
               "$RUNNER_TEMP/kernel-build.log"; then
-            echo "::error::build.sh reported a failed clean, configuration, or compile step."
+            echo "::error::build_kernel.sh reported a failed clean, configuration, or compile step."
             exit 1
           fi
           grep -Fq '[+] Cleaning Succeed' "$RUNNER_TEMP/kernel-build.log"
