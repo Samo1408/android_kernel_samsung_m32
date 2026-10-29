@@ -47,7 +47,7 @@ jobs:
         env:
           TERM: xterm
         run: |
-          #set -euo pipefail
+          
           test -f build.sh
           test -f config.cfg
           test -f arch/arm64/configs/rsuntk_defconfig
@@ -70,7 +70,7 @@ jobs:
       - name: Collect kernel build outputs
         shell: bash
         run: |
-          #set -euo pipefail
+          
           mkdir -p kernel-artifacts
           cp out/arch/arm64/boot/Image.gz-dtb \
             kernel-artifacts/
