@@ -47,13 +47,15 @@ jobs:
         env:
           TERM: xterm
         run: |
-          
+          test -f daily.sh
           test -f build_kernel.sh
           test -f config.cfg
           test -f arch/arm64/configs/rsuntk_defconfig
           test ! -e out/.config
           printf '1\rsuntk_defconfig\n\nE\n' |
+            timeout 110m bash ./daily.sh 2>&1 | tee "$RUNNER_TEMP/kernel-build.log"
             timeout 110m bash ./build_kernel.sh 2>&1 | tee "$RUNNER_TEMP/kernel-build.log"
+          
           if grep -Eq 'Kernel Building Failed|Config Applying Failed|Cleaning Failed|rsuntk_defconfig is not found' \
               "$RUNNER_TEMP/kernel-build.log"; then
             echo "::error::build_kernel.sh reported a failed clean, configuration, or compile step."
@@ -65,8 +67,7 @@ jobs:
           test -s out/.config
           grep -Fxq 'CONFIG_BUILD_ARM64_APPENDED_KERNEL_IMAGE_NAME="Image.gz-dtb"' out/.config
           test -s out/arch/arm64/boot/Image.gz-dtb
-          #test -s out/arch/arm64/boot/Image.gz
-
+          
       - name: Collect kernel build outputs
         shell: bash
         run: |
