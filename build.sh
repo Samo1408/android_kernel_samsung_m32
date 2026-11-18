@@ -12,7 +12,7 @@ OUT_DIR="$ROOT/out"
 # Defaults (all can be overridden by the environment).
 IS_CI="${IS_CI:-false}"
 DO_CLEAN="${DO_CLEAN:-false}"
-LTO="${LTO:-thin}"
+LTO="${LTO:-none}"
 DEFAULT_KSU_REPO="${DEFAULT_KSU_REPO:-https://raw.githubusercontent.com/LyraVoid/FinaSU/master/kernel/setup.sh}"
 # Empty means: let OriginSU select its latest stable tag.
 DEFAULT_KSU_BRANCH="${DEFAULT_KSU_BRANCH:-master}"
