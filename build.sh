@@ -13,9 +13,9 @@ OUT_DIR="$ROOT/out"
 IS_CI="${IS_CI:-false}"
 DO_CLEAN="${DO_CLEAN:-false}"
 LTO="${LTO:-none}"
-DEFAULT_KSU_REPO="${DEFAULT_KSU_REPO:-https://raw.githubusercontent.com/KazeSU/KazeSU/main/kernel/setup.sh}"
+DEFAULT_KSU_REPO="${DEFAULT_KSU_REPO:-https://raw.githubusercontent.com/LyraVoid/FinaSU/master/kernel/setup.sh}"
 # Empty means: let OriginSU select its latest stable tag.
-DEFAULT_KSU_BRANCH="${DEFAULT_KSU_BRANCH:-main}"
+DEFAULT_KSU_BRANCH="${DEFAULT_KSU_BRANCH:-master}"
 DEFAULT_AK3_REPO="${DEFAULT_AK3_REPO:-https://github.com/rsuntk/AnyKernel3.git}"
 DEVICE="${DEVICE:-M325FV}"
 IMAGE="${IMAGE:-$OUT_DIR/arch/arm64/boot/Image}"
@@ -110,7 +110,7 @@ config KSU
     bool
     default n
 EOF
-        pr_info "OriginSU disabled: temporary CONFIG_KSU=n Kconfig placeholder created."
+        pr_info "FinaSU disabled: temporary CONFIG_KSU=n Kconfig placeholder created."
     fi
 }
 
@@ -123,19 +123,19 @@ install_origin_su() {
         rm -rf "$ROOT/drivers/kernelsu"
     fi
 
-    command -v curl >/dev/null 2>&1 || pr_err "curl is required to install OriginSU."
+    command -v curl >/dev/null 2>&1 || pr_err "curl is required to install FinaSU."
     [ -n "$DEFAULT_KSU_REPO" ] || pr_err "DEFAULT_KSU_REPO is empty."
 
     # With submodules:false, Git may leave an empty KernelSU/ directory
     # for the KernelSU submodule declared in .gitmodules. The upstream
     # setup.sh checks only -d, so that empty directory would make it skip
     # cloning and Git commands would accidentally run in the parent kernel repo.
-    if [ -d "$ROOT/KernelSU" ] && [ ! -e "$ROOT/KernelSU/.git" ]; then
-        if [ -z "$(find "$ROOT/KernelSU" -mindepth 1 -maxdepth 1 -print -quit 2>/dev/null)" ]; then
-            rmdir "$ROOT/KernelSU" || pr_err "Unable to remove empty KernelSU submodule placeholder."
-            pr_info "Removed empty KernelSU submodule placeholder before OriginSU setup."
+    if [ -d "$ROOT/FinaSU" ] && [ ! -e "$ROOT/FinaSU/.git" ]; then
+        if [ -z "$(find "$ROOT/FinaSU" -mindepth 1 -maxdepth 1 -print -quit 2>/dev/null)" ]; then
+            rmdir "$ROOT/FinaSU" || pr_err "Unable to remove empty FinaSU submodule placeholder."
+            pr_info "Removed empty FinaSU submodule placeholder before FinaSU setup."
         else
-            pr_err "KernelSU/ exists but is not a Git checkout and is not empty; refusing to overwrite it."
+            pr_err "FinaSU/ exists but is not a Git checkout and is not empty; refusing to overwrite it."
         fi
     fi
 
@@ -151,10 +151,10 @@ install_origin_su() {
             pr_err "OriginSU setup failed."
     fi
 
-    [ -d "$ROOT/KernelSU" ] || pr_err "OriginSU setup did not create KernelSU/."
-    [ -e "$ROOT/drivers/kernelsu" ] || pr_err "OriginSU did not create drivers/kernelsu."
+    [ -d "$ROOT/FinaSU" ] || pr_err "FinaSU setup did not create FinaSU/."
+    [ -e "$ROOT/drivers/kernelsu" ] || pr_err "FinaSU did not create drivers/kernelsu."
     [ -f "$ROOT/drivers/kernelsu/Kconfig" ] ||
-        pr_err "OriginSU integration is incomplete: drivers/kernelsu/Kconfig is missing."
+        pr_err "FinaSU integration is incomplete: drivers/kernelsu/Kconfig is missing."
 
     # Linux 4.14 Kconfig rejects an endmenu in drivers/Kconfig when the
     # sourced OriginSU Kconfig opens its own menu inside that parent menu.
@@ -167,7 +167,7 @@ install_origin_su() {
     printf '\nsource "drivers/kernelsu/Kconfig"\n' >> "$ROOT/drivers/Kconfig"
     tail -n 4 "$ROOT/drivers/Kconfig"
 
-    pr_info "OriginSU integration verified (Kconfig source placed outside Device Drivers menu)."
+    pr_info "FinaSU integration verified (Kconfig source placed outside Device Drivers menu)."
 }
 
 gen_getutsrelease() {
@@ -375,7 +375,7 @@ if [ "$KERNELSU" = true ]; then
     install_origin_su
 else
     prepare_ksu_disabled_stub
-    pr_info "OriginSU is disabled; building without KSU."
+    pr_info "FinaSU is disabled; building without KSU."
 fi
 
 pr_step 1 3 "Starting build with Rissu's build script"
@@ -396,7 +396,7 @@ echo "Allocated core(s): $ALLOC_JOB"
 echo "LTO: $LTO"
 echo "LLVM: ${LLVM:-0}"
 echo "LLVM_IAS: ${LLVM_IAS:-0}"
-echo "KernelSU: $KERNELSU"
+echo "FinaSU: $KERNELSU"
 echo "======================================================="
 
 pr_step 2 3 "Configuring and building $BUILD_TARGET"
