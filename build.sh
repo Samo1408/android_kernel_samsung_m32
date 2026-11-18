@@ -156,7 +156,18 @@ install_origin_su() {
     [ -f "$ROOT/drivers/kernelsu/Kconfig" ] ||
         pr_err "OriginSU integration is incomplete: drivers/kernelsu/Kconfig is missing."
 
-    pr_info "OriginSU integration verified."
+    # Linux 4.14 Kconfig rejects an endmenu in drivers/Kconfig when the
+    # sourced OriginSU Kconfig opens its own menu inside that parent menu.
+    # Keep the OriginSU menu self-contained by sourcing it after the
+    # Device Drivers menu has been closed. Remove duplicates first so this
+    # remains safe on repeated builds.
+    if grep -Fq 'source "drivers/kernelsu/Kconfig"' "$ROOT/drivers/Kconfig"; then
+        sed -i '\|^source "drivers/kernelsu/Kconfig"[[:space:]]*$|d' "$ROOT/drivers/Kconfig"
+    fi
+    printf '\nsource "drivers/kernelsu/Kconfig"\n' >> "$ROOT/drivers/Kconfig"
+    tail -n 4 "$ROOT/drivers/Kconfig"
+
+    pr_info "OriginSU integration verified (Kconfig source placed outside Device Drivers menu)."
 }
 
 gen_getutsrelease() {
