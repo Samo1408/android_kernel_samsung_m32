@@ -15,7 +15,7 @@ DO_CLEAN="${DO_CLEAN:-false}"
 LTO="${LTO:-none}"
 DEFAULT_KSU_REPO="${DEFAULT_KSU_REPO:-https://raw.githubusercontent.com/LyraVoid/FinaSU/master/kernel/setup.sh}"
 # Empty means: let OriginSU select its latest stable tag.
-DEFAULT_KSU_BRANCH="${DEFAULT_KSU_BRANCH:-master}"
+DEFAULT_KSU_BRANCH="${DEFAULT_KSU_BRANCH:-dev}"
 DEFAULT_AK3_REPO="${DEFAULT_AK3_REPO:-https://github.com/rsuntk/AnyKernel3.git}"
 DEVICE="${DEVICE:-M325FV}"
 IMAGE="${IMAGE:-$OUT_DIR/arch/arm64/boot/Image}"
